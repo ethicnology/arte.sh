@@ -17,9 +17,6 @@ bool validFilmIdArte(String idArte) {
 }
 
 Future<void> collectFilm({required String idArte}) async {
-  var isValid = validFilmIdArte(idArte);
-  if (!isValid) log.severe('INVALID␟$idArte␟not a film');
-
   // Define if it's film / series / episode
   final idType = await getIdType("film");
 

@@ -1,6 +1,6 @@
 import 'arte.dart';
 
-Future<int> getOrInsertIdThing(int categoryId, String arteId) async {
+Future<int> getOrInsertIdThing(int typeId, String arteId) async {
   const table = 'thing';
   final thing = await supabase.from(table).select().eq('arte', arteId);
   if (thing.isNotEmpty) {
@@ -9,7 +9,7 @@ Future<int> getOrInsertIdThing(int categoryId, String arteId) async {
   } else {
     final newThing = await supabase
         .from('thing')
-        .insert({'id_type': categoryId, 'arte': arteId}).select();
+        .insert({'id_type': typeId, 'arte': arteId}).select();
     log.fine('$arteId␟$table␟${newThing.first['id']}');
     return newThing.first['id'];
   }

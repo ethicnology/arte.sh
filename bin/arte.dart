@@ -35,6 +35,8 @@ Future<void> main(List<String> args) async {
   String? idArte = cli['arte'];
   bool catalog = cli['catalog'];
 
+  if (idArte != null) validFilmIdArte(idArte);
+
   log.info('START␟${DateTime.now().toIso8601String()}');
   log.info('MODE␟$mode');
   log.info('ARTE␟$idArte');
