@@ -3,6 +3,21 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 import 'arte.dart';
+import 'film.dart';
+import 'table_thing.dart';
+
+collectCinemaCatalog({bool force = false}) async {
+  var select = await supabase.from(Thing.table).select('arte');
+  var filmsInDb = select.map((item) => item['arte']).toSet();
+  log.info('FETCH␟${select.length}␟films');
+  var cinemaCatalog = await getCinemaCatalog();
+
+  var collect = cinemaCatalog.toSet().difference(filmsInDb);
+  if (force) collect = cinemaCatalog.toSet();
+
+  log.info('COLLECT␟${collect.length}␟films');
+  for (var idArte in collect) await collectFilm(idArte: idArte);
+}
 
 Future<List<String>> getCinemaCatalog() async {
   try {

@@ -6,12 +6,13 @@ import 'package:supabase/supabase.dart';
 
 import 'cinema.dart';
 import 'film.dart';
+import 'subtitles.dart';
 
 final log = LoggerColorful('arte');
 
-var url = Platform.environment['SUPABASE_URL'];
-var key = Platform.environment['SUPABASE_KEY'];
-var supabase = SupabaseClient(url!, key!);
+final url = Platform.environment['SUPABASE_URL'];
+final key = Platform.environment['SUPABASE_KEY'];
+final supabase = SupabaseClient(url!, key!);
 
 const languages = <String>["fr", "de", "en", "es", "pl", "it"];
 
@@ -26,9 +27,9 @@ Future<void> main(List<String> args) async {
   });
 
   var parser = ArgParser();
-  parser.addOption('mode', abbr: 'm');
-  parser.addOption('arte', abbr: 'a');
-  parser.addFlag('catalog', defaultsTo: false);
+  parser.addOption('mode', abbr: 'm', help: 'film, subtitles');
+  parser.addOption('arte', abbr: 'a', help: '083874-000-A');
+  parser.addFlag('catalog', defaultsTo: false, help: 'collect all catalog');
 
   var cli = parser.parse(args);
   String? mode = cli['mode'];
@@ -42,21 +43,13 @@ Future<void> main(List<String> args) async {
   log.info('ARTE␟$idArte');
   log.info('CATALOG␟$catalog');
 
-  if (mode == 'cinema') {
-    var select = await supabase.from('thing').select('arte');
-    var filmsInDb = select.map((item) => item['arte']).toSet();
-    log.info('FETCH␟${select.length}␟films');
-    var cinemaCatalog = await getCinemaCatalog();
-
-    var collect = cinemaCatalog.toSet().difference(filmsInDb);
-    if (catalog) collect = cinemaCatalog.toSet();
-
-    log.info('COLLECT␟${collect.length}␟films');
-    for (var idArte in collect) await collectFilm(idArte: idArte);
-  } else if (mode == 'solo' && idArte != null) {
+  if (mode == 'film' && idArte == null) {
+    await collectCinemaCatalog(force: catalog);
+  } else if (mode == 'film' && idArte != null) {
     await collectFilm(idArte: idArte);
-  } else {
-    log.severe("INVALID␟$mode");
+  } else if (mode == 'subtitles' && idArte != null) {
+    await downloadSubs(idArte: idArte);
+    await collectSubs(idArte: idArte);
   }
   log.info('END␟${DateTime.now().toIso8601String()}');
   exit(0);
