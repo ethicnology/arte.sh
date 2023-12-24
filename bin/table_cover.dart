@@ -9,10 +9,9 @@ class Cover {
   static const table = 'arte_cover';
   int idThing;
   bool withText;
-  String encoded; // base64
+  String file; // base64
 
-  Cover._(
-      {required this.idThing, required this.withText, required this.encoded});
+  Cover._({required this.idThing, required this.withText, required this.file});
 
   static Future<Cover> download(
       {required int idThing, required Uri url, required bool withText}) async {
@@ -24,7 +23,7 @@ class Cover {
         return Cover._(
           idThing: idThing,
           withText: url.toString().contains('TEXT'),
-          encoded: base64.encode(bytes),
+          file: base64.encode(bytes),
         );
       } else {
         log.severe('cover␟${response.statusCode}');
@@ -38,11 +37,9 @@ class Cover {
 
   Future<bool> insert() async {
     try {
-      var insert = await supabase.from(table).upsert({
-        'id_thing': idThing,
-        'with_text': withText,
-        'encoded': encoded
-      }).select();
+      var insert = await supabase.from(table).upsert(
+        {'id_thing': idThing, 'with_text': withText, 'file': file},
+      ).select();
       log.fine('$idThing␟$table␟${insert.first['id']}');
       return true;
     } catch (e) {
@@ -51,8 +48,7 @@ class Cover {
     }
   }
 
-  static const folder = 'covers';
   Future<File> toFile(String filename) async {
-    return await File('$covers/$filename').writeAsBytes(base64.decode(encoded));
+    return await File('$covers/$filename').writeAsBytes(base64.decode(file));
   }
 }
