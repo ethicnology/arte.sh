@@ -32,11 +32,14 @@ collectSubtitles(String idArte, int idProvider) async {
       var name = path.basename(file.path);
       var parts = name.split('.');
       if (idArte == parts.first && parts.length == 3) {
+        var idLang = langtags[parts[1]];
+        if (idLang == null) throw Exception('Language not found');
+
         subs.add(
           Subtitles(
             idThing: idThing,
             idProvider: idProvider,
-            lang: parts[1],
+            idLang: idLang,
             file: subtitle,
             ext: parts.last,
           ),

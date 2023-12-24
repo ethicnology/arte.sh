@@ -3,14 +3,14 @@ import 'global.dart';
 class Description {
   static const table = 'arte_description';
   int idThing;
-  String lang;
+  int idLang;
   String? subtitle;
   String? description;
   String? fullDescription;
 
   Description({
     required this.idThing,
-    required this.lang,
+    required this.idLang,
     this.subtitle,
     this.description,
     this.fullDescription,
@@ -23,7 +23,7 @@ class Description {
             .from(table)
             .update({'full_description': fullDescription})
             .eq('id_thing', idThing)
-            .eq('lang', lang)
+            .eq('id_lang', idLang)
             .select();
 
         log.fine('$idThing␟$table␟${update.first['id']}');
@@ -41,7 +41,7 @@ class Description {
       try {
         var insert = await supabase.from(table).insert({
           'id_thing': idThing,
-          'lang': lang,
+          'id_lang': idLang,
           'subtitle': subtitle,
           'description': description,
           'full_description': fullDescription,

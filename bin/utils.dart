@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 
 import 'global.dart';
+import 'table_language.dart';
 
 Future<String> bash(String command) async {
   var process = await Process.run('bash', ['-c', command]);
@@ -35,4 +36,13 @@ Future<List<File>> listFiles(String folder, String prefix, String ext) async {
     return false;
   }).toList();
   return filter.cast<File>();
+}
+
+Future<Map<String, int>> getLangtagIds() async {
+  var dbLanguages = await Language.all();
+  Map<String, int> result = {};
+  for (var dbLang in dbLanguages) {
+    result[dbLang['tag']] = dbLang['id'];
+  }
+  return result;
 }

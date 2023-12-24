@@ -15,19 +15,21 @@ Future<void> collectFilm(String idArte, int idType, int idProvider) async {
   var infos = <Info>[];
   var titles = <Title>[];
   var descriptions = <Description>[];
-  for (var lang in languages) {
+  for (var lang in arteLanguages) {
     var scrapped = await scrap(idThing, lang, idArte);
     if (scrapped != null) {
       titles.add(extractTitle(scrap: scrapped));
       descriptions.add(extractDescription(scrap: scrapped));
       infos.add(extractInfo(scrap: scrapped));
       if (lang == 'fr') {
-        var frCover = await extractCover(scrap: scrapped, withText: false);
-        var frCoverText = await extractCover(scrap: scrapped, withText: true);
-        await frCover?.insert();
-        frCover?.toFile('$idArte.webp');
-        await frCoverText?.insert();
-        frCoverText?.toFile('$idArte.fr.webp');
+        var coverNoText = await extractCover(scrap: scrapped, withText: false);
+        await coverNoText?.insert();
+        coverNoText?.toFile('$idArte.webp');
+      }
+      if (['fr', 'de', 'en'].contains(lang)) {
+        var coverWithText = await extractCover(scrap: scrapped, withText: true);
+        await coverWithText?.insert();
+        coverWithText?.toFile('$idArte.$lang.webp');
       }
     }
   }

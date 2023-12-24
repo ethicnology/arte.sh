@@ -26,7 +26,10 @@ Future<Map<String, dynamic>> _fetch(Uri url) async {
 }
 
 Future<Map<String, dynamic>?> scrap(
-    int idThing, String lang, String idArte) async {
+  int idThing,
+  String lang,
+  String idArte,
+) async {
   try {
     var api = await _scrapApi(idThing, lang, idArte);
     var www = await _scrapWww(idThing, lang, idArte);
@@ -35,6 +38,7 @@ Future<Map<String, dynamic>?> scrap(
       'id_thing': idThing,
       'id_arte': idArte,
       'lang': lang,
+      'id_lang': langtags[lang],
       ...api,
       ...www
     };

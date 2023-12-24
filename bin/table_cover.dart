@@ -6,15 +6,19 @@ import 'package:http/http.dart';
 import 'global.dart';
 
 class Cover {
-  static const table = 'arte_cover';
+  static const table = 'cover';
   int idThing;
-  bool withText;
+  int idLang;
   String file; // base64
 
-  Cover._({required this.idThing, required this.withText, required this.file});
+  Cover._({required this.idThing, required this.idLang, required this.file});
 
-  static Future<Cover> download(
-      {required int idThing, required Uri url, required bool withText}) async {
+  static Future<Cover> download({
+    required int idThing,
+    required String lang,
+    required bool withText,
+    required Uri url,
+  }) async {
     try {
       if (withText) url = url.replace(queryParameters: {'type': 'TEXT'});
       final response = await get(url);
@@ -22,7 +26,7 @@ class Cover {
         var bytes = response.bodyBytes;
         return Cover._(
           idThing: idThing,
-          withText: url.toString().contains('TEXT'),
+          idLang: withText ? langtags[lang]! : langtags['und']!,
           file: base64.encode(bytes),
         );
       } else {
@@ -38,7 +42,7 @@ class Cover {
   Future<bool> insert() async {
     try {
       var insert = await supabase.from(table).upsert(
-        {'id_thing': idThing, 'with_text': withText, 'file': file},
+        {'id_thing': idThing, 'id_lang': idLang, 'file': file},
       ).select();
       log.fine('$idThing␟$table␟${insert.first['id']}');
       return true;

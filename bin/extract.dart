@@ -11,7 +11,11 @@ Future<Cover?> extractCover(
     url = url.replaceAll('?type=TEXT&watermark=true', '');
 
     return Cover.download(
-        idThing: scrap['id_thing'], url: Uri.parse(url), withText: withText);
+      lang: scrap['lang'],
+      idThing: scrap['id_thing'],
+      url: Uri.parse(url),
+      withText: withText,
+    );
   } catch (e) {
     log.severe('${scrap['id_thing']}␟extract_cover␟${e.toString()}');
     return null;
@@ -20,13 +24,16 @@ Future<Cover?> extractCover(
 
 Title extractTitle({required Map<String, dynamic> scrap}) {
   return Title(
-      idThing: scrap['id_thing'], lang: scrap['lang'], label: scrap['title']);
+    idThing: scrap['id_thing'],
+    idLang: scrap['id_lang'],
+    label: scrap['title'],
+  );
 }
 
 Description extractDescription({required Map<String, dynamic> scrap}) {
   return Description(
     idThing: scrap['id_thing'],
-    lang: scrap['lang'],
+    idLang: scrap['id_lang'],
     subtitle: scrap['subtitle'],
     description: scrap['description'],
     fullDescription: scrap['full_description'],

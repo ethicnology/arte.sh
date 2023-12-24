@@ -4,14 +4,14 @@ class Subtitles {
   static const table = 'subtitles';
   int idThing;
   int idProvider;
-  String lang;
+  int idLang;
   String file;
   String ext;
 
   Subtitles({
     required this.idThing,
     required this.idProvider,
-    required this.lang,
+    required this.idLang,
     required this.file,
     required this.ext,
   });
@@ -21,7 +21,7 @@ class Subtitles {
       var insert = await supabase.from(table).insert({
         'id_thing': idThing,
         'id_provider': idProvider,
-        'lang': lang,
+        'id_lang': idLang,
         'file': file,
         'ext': ext,
       }).select();

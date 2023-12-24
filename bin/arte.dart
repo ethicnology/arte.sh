@@ -27,6 +27,10 @@ Future<void> main(List<String> args) async {
   await createFolder(covers);
   await createFolder(subtitles);
 
+  // Languages validation
+  langtags = await getLangtagIds();
+  Validate.languages(langtags);
+
   // CLI
   var parser = ArgParser();
   parser.addOption('mode', abbr: 'm', help: 'film', mandatory: true);

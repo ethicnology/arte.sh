@@ -3,18 +3,22 @@ import 'global.dart';
 class Title {
   static const table = 'title';
   int idThing;
-  String lang;
+  int idLang;
   String? label;
   bool? isOriginal;
 
-  Title(
-      {required this.idThing, required this.lang, this.label, this.isOriginal});
+  Title({
+    required this.idThing,
+    required this.idLang,
+    this.label,
+    this.isOriginal,
+  });
 
   Future<bool> insert() async {
     try {
       var insert = await supabase.from(table).insert({
         'id_thing': idThing,
-        'lang': lang,
+        'id_lang': idLang,
         'label': label,
         'is_original': isOriginal,
       }).select();
