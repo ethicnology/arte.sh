@@ -1,4 +1,4 @@
-import 'arte.dart';
+import 'global.dart';
 
 class Info {
   static const table = 'arte_info';

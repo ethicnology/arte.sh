@@ -1,27 +1,15 @@
-import 'arte.dart';
-import 'database.dart';
+import 'table_thing.dart';
 import 'extract.dart';
+import 'global.dart';
 import 'scrap.dart';
+import 'subtitles.dart';
 import 'table_description.dart';
 import 'table_info.dart';
 import 'table_title.dart';
 
-bool validFilmIdArte(String idArte) {
-  var parts = idArte.split('-');
-  if (parts.length != 3) throw Exception('invalid id');
-  if (parts[0].length != 6) throw Exception('first part lenght');
-  if (parts[1].length != 3) throw Exception('second part lenght');
-  if (parts[2].length != 1) throw Exception('last part lenght');
-  if (int.parse(parts[1]) != 0) throw Exception('not a movie');
-  return true;
-}
-
-Future<void> collectFilm({required String idArte}) async {
-  // Define if it's film / series / episode
-  final idType = await getIdType("film");
-
+Future<void> collectFilm(String idArte, int idType, int idProvider) async {
   // Check if thing already created if no create it
-  final idThing = await getOrInsertIdThing(idType, idArte);
+  final idThing = await Thing.getIdOrInsert(idType, idArte);
 
   // Store each title, subtitle, description per language
   var infos = <Info>[];
@@ -73,4 +61,7 @@ Future<void> collectFilm({required String idArte}) async {
   info.countries = countries.isNotEmpty ? countries.toList() : null;
   info.productors = productors.isNotEmpty ? productors.toList() : null;
   await info.insert();
+
+  await extractSubtitles(idArte);
+  await collectSubtitles(idArte, idProvider);
 }

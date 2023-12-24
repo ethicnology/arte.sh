@@ -1,4 +1,4 @@
-import 'arte.dart';
+import 'global.dart';
 
 class Subtitles {
   static const table = 'subtitles';

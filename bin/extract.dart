@@ -1,4 +1,4 @@
-import 'arte.dart';
+import 'global.dart';
 import 'table_cover.dart';
 import 'table_description.dart';
 import 'table_info.dart';

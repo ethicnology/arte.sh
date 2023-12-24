@@ -1,35 +1,29 @@
-import 'table_provider.dart';
+import 'global.dart';
 import 'table_subtitles.dart';
 import 'table_thing.dart';
 import 'utils.dart';
 import 'package:path/path.dart' as path;
 
-const folder = 'subtitles';
-
-downloadSubs({required String idArte}) async {
-  var path = await createFolder(folder);
+extractSubtitles(String idArte) async {
   var arteUrl = 'https://www.arte.tv/fr/videos/$idArte';
   var command = [
     'yt-dlp',
     '--skip-download',
     '--sub-langs all',
     '--write-subs',
-    '-o "$path/$idArte.%(ext)s"',
+    '-o "$subtitles/$idArte.%(ext)s"',
     arteUrl
   ];
   var stdout = await bash(command.join(' '));
   return stdout;
 }
 
-collectSubs({required String idArte}) async {
-  var files = await listFiles(folder, idArte, 'vtt');
+collectSubtitles(String idArte, int idProvider) async {
+  var files = await listFiles(subtitles, idArte, 'vtt');
   if (files.isEmpty) return;
 
   final thing = await Thing.get(idArte);
   final idThing = thing['id'];
-
-  final provider = await Provider.get('arte');
-  final idProvider = provider['id'];
 
   var subs = <Subtitles>[];
   try {

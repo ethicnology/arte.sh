@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:http/http.dart';
 
-import 'arte.dart';
+import 'global.dart';
 
 class Cover {
   static const table = 'arte_cover';
@@ -51,7 +51,8 @@ class Cover {
     }
   }
 
-  Future<File> toFile(String path) async {
-    return await File(path).writeAsBytes(base64.decode(encoded));
+  static const folder = 'covers';
+  Future<File> toFile(String filename) async {
+    return await File('$covers/$filename').writeAsBytes(base64.decode(encoded));
   }
 }

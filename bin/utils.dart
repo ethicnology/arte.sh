@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:path/path.dart' as path;
+import 'package:path/path.dart';
 
-const appData = 'arte_data';
+import 'global.dart';
 
 Future<String> bash(String command) async {
   var process = await Process.run('bash', ['-c', command]);
@@ -9,23 +9,23 @@ Future<String> bash(String command) async {
 }
 
 Future<String> createFolder(String folder) async {
-  var fullPath = path.join(Directory.current.path, appData, folder);
+  var fullPath = join(appData, folder);
   try {
     if (!await Directory(fullPath).exists()) {
       await Directory(fullPath).create(recursive: true);
-      print('created: $fullPath');
+      log.fine('CREATED␟$folder␟$fullPath');
       return fullPath;
     } else {
-      print('exists: $fullPath');
       return fullPath;
     }
   } catch (e) {
+    log.severe('FAILED␟$folder␟$fullPath');
     throw Exception('Error creating folder: $e');
   }
 }
 
 Future<List<File>> listFiles(String folder, String prefix, String ext) async {
-  var fullPath = path.join(Directory.current.path, appData, folder);
+  var fullPath = join(appData, folder);
   var files = await Directory(fullPath).list().toList();
   var filter = files.where((file) {
     if (file is File) {

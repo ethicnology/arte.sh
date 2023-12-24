@@ -1,12 +1,15 @@
 import 'dart:convert';
 
-import 'arte.dart';
+import 'global.dart';
 
 import 'package:http/http.dart';
 
 Future<Map<String, dynamic>> _fetch(Uri url) async {
   await Future.delayed(Duration(seconds: 2));
-  var response = await get(url);
+
+  var ip = ips[random.nextInt(ips.length)]; // bypass geoblocking
+
+  var response = await get(url, headers: {'X-Forwarded-For': ip});
 
   var code = response.statusCode;
   while (code == 429) {
@@ -36,7 +39,7 @@ Future<Map<String, dynamic>?> scrap(
       ...www
     };
   } catch (e) {
-    log.severe('SCRAP␟$idArte␟$idThing␟$lang');
+    log.severe('SCRAP␟$idThing␟$lang␟$idArte');
     return null;
   }
 }
@@ -142,4 +145,45 @@ Future<Map<String, dynamic>> _scrapWww(
     'cover_high': highCover,
     'full_description': fullDescription,
   };
+}
+
+Future<List<String>> scrapFilmsIds() async {
+  try {
+    var url = Uri.https(
+        'www.arte.tv', '/api/rproxy/emac/v4/fr/web/pages/SUBCATEGORY_FLM');
+    var response = await _fetch(url);
+    var zones = response['value']['zones'][0];
+    String id = zones['id'].split('_')[0];
+    int total = zones['content']['pagination']['totalCount'];
+
+    var catalog = <String>{};
+    var fetch = true;
+    var index = 0;
+    while (fetch) {
+      var more = Uri.https(
+        'www.arte.tv',
+        '/api/rproxy/emac/v4/fr/web/zones/$id/content',
+        {'page': '$index'},
+      );
+      var response = await _fetch(more);
+
+      var data = response['value']['data'];
+      for (var element in data) {
+        String? idArte = element['programId'];
+        if (idArte != null) catalog.add(idArte);
+      }
+
+      index += 1;
+      fetch = data.isNotEmpty;
+    }
+    if (catalog.length == total) {
+      log.info('SCRAP␟$total␟films␟ids from catalog');
+    } else {
+      log.severe('${total - catalog.length}␟films␟missing from catalog');
+    }
+    return catalog.toList();
+  } catch (e) {
+    log.severe('SCRAP␟films␟catalog␟${e.toString()}');
+    throw Exception();
+  }
 }
