@@ -49,13 +49,18 @@ Future<void> main(List<String> args) async {
 
   // starting…
   log.info('START␟${DateTime.now().toIso8601String()}');
-  log.info('MODE␟$mode');
-  log.info('ARTE␟$idArte');
-  log.info('FORCE␟$force');
+  log.finest('MODE:␟$mode␟ARTE:␟$idArte␟FORCE:␟$force');
 
   if (mode == 'film') {
     if (idArte != null) {
-      await collectFilm(idArte, idType, idProvider);
+      var isStored = await Thing.isStored(idArte);
+      if (isStored == false) {
+        await collectFilm(idArte, idType, idProvider);
+      } else {
+        log.warning('STORED␟$isStored␟FORCE␟$force␟$idArte');
+        if (isStored && force) await collectFilm(idArte, idType, idProvider);
+        // DO NOTHING if not forced
+      }
     } else {
       var things = await Thing.all();
       var idsArte = things.map((item) => item['arte']).toSet();

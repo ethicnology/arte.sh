@@ -3,6 +3,13 @@ import 'global.dart';
 class Thing {
   static const table = 'thing';
 
+  static Future<bool> isStored(String idArte) async {
+    final select = await supabase.from(table).select('id').eq('arte', idArte);
+    log.info('COUNT␟${select.length}␟$table␟$idArte');
+    if (select.length == 1) return true;
+    return false;
+  }
+
   static Future<List<Map<String, dynamic>>> all() async {
     var select = await supabase.from(table).select();
     log.info('FETCH␟${select.length}␟$table');
