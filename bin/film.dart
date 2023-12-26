@@ -6,8 +6,17 @@ import 'subtitles.dart';
 import 'table_description.dart';
 import 'table_info.dart';
 import 'table_title.dart';
+import 'validate.dart';
 
 Future<void> collectFilm(String idArte, int idType, int idProvider) async {
+  try {
+    Validate.idFilm(idArte);
+    log.info('COLLECT␟$idArte');
+  } catch (e) {
+    log.warning('UNVALID␟$idArte');
+    return;
+  }
+
   // Check if thing already created if no create it
   final idThing = await Thing.getIdOrInsert(idType, idArte);
 

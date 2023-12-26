@@ -42,7 +42,6 @@ Future<void> main(List<String> args) async {
   bool force = cli['force'];
 
   // validate cli arguments
-  if (idArte != null) Validate.idFilm(idArte);
   if (!['film'].contains(mode)) throw Exception('wrong mode');
   final idType = await Type.getId(mode); // film/series/episode
   final idProvider = await Provider.getId('arte');
