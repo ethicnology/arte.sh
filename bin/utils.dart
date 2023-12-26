@@ -10,7 +10,7 @@ Future<String> bash(String command) async {
 }
 
 Future<String> createFolder(String folder) async {
-  var fullPath = join(appData, folder);
+  var fullPath = join(path!, folder);
   try {
     if (!await Directory(fullPath).exists()) {
       await Directory(fullPath).create(recursive: true);
@@ -26,7 +26,7 @@ Future<String> createFolder(String folder) async {
 }
 
 Future<List<File>> listFiles(String folder, String prefix, String ext) async {
-  var fullPath = join(appData, folder);
+  var fullPath = join(path!, folder);
   var files = await Directory(fullPath).list().toList();
   var filter = files.where((file) {
     if (file is File) {

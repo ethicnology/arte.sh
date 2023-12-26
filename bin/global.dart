@@ -18,9 +18,8 @@ final random = Random();
 final _env = DotEnv(includePlatformEnvironment: true)..load();
 final _url = _env['SUPABASE_URL'];
 final _key = _env['SUPABASE_KEY'];
-final _path = _env['OUTPUT_PATH'];
+final path = _env['OUTPUT_PATH'];
 final supabase = SupabaseClient(_url!, _key!);
 
-final appData = join(_path!, 'arte_data');
-final covers = join(appData, 'covers');
-final subtitles = join(appData, 'subtitles');
+final covers = join(path!, 'covers');
+final subtitles = join(path!, 'subtitles');
