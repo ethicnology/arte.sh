@@ -4,6 +4,7 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 
 import 'global.dart';
+import 'arte_program.dart';
 import 'table_language.dart';
 
 Future<Map<String, dynamic>> retryUntilGet(Uri url) async {
@@ -27,22 +28,29 @@ Future<Map<String, dynamic>> retryUntilGet(Uri url) async {
   throw Exception('code: $code');
 }
 
-Future<List> pagination(int pages, int total, String firstLink) async {
+Future<List<ArteProgram>> paginate(Map<String, dynamic> pagination) async {
+  int pages = pagination['pages'];
+  int total = pagination['totalCount'];
+  String firstLink = pagination['links']['first'];
+
   var firstUri = Uri.parse(firstLink
       .replaceAll('api-internal', 'www')
       .replaceAll('api/emac', 'api/rproxy/emac'));
   var params = Map<String, String>.from(firstUri.queryParameters);
 
-  var data = [];
+  var programs = <ArteProgram>[];
   for (var p = 1; p <= pages; p++) {
     params['page'] = p.toString();
     var url = firstUri.replace(queryParameters: params);
     var response = await retryUntilGet(url);
-    data.addAll(response['value']['data']);
+    var data = List<Map<String, dynamic>>.from(response['value']['data']);
+    programs.addAll(
+        data.map<ArteProgram>((map) => ArteProgram.fromJson(map)).toList());
+    log.info('pages: $p/$pages');
   }
 
-  if (data.length != total) throw Exception('${data.length} / $total');
-  return data;
+  if (programs.length != total) throw Exception('${programs.length}/$total');
+  return programs;
 }
 
 Future<String> bash(String command) async {

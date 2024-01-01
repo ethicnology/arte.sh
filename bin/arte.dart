@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:logging_colorful/logging_colorful.dart';
 
+import 'catalog.dart';
 import 'table_provider.dart';
 import 'table_type.dart';
 import 'film.dart';
 import 'global.dart';
-import 'scrap.dart';
 import 'table_thing.dart';
 import 'utils.dart';
 import 'validate.dart';
@@ -64,9 +64,14 @@ Future<void> main(List<String> args) async {
       var things = await Thing.all();
       var idsArte = things.map((item) => item['arte']).toSet();
 
-      var catalog = await scrapFilmsIds();
+      var docs = await scrapCatalog('DOR');
+      var cinema = await scrapCatalog('SUBCATEGORY_FLM');
+      var catalog = <String>{};
+      for (var e in [...docs, ...cinema]) {
+        if (e.isFilm() && e.programId != null) catalog.add(e.programId!);
+      }
 
-      Set<String> collect = catalog.toSet().difference(idsArte);
+      Set<String> collect = catalog.difference(idsArte);
       if (force) collect = catalog.toSet();
       log.info('COLLECT␟${collect.length}␟films');
 
