@@ -9,6 +9,13 @@ cp .env.example .env
 
 ## database
 
+Make postgres **superuser** during migration and then put it back **nosuperuser** in supabase SQL editor
+```sql
+ALTER ROLE postgres SUPERUSER
+-- After migrations make postgres NOSUPERUSER
+ALTER ROLE postgres NOSUPERUSER
+```
+
 **restore dump** schema and basic data
 ```sh
 psql -h localhost -U postgres -d postgres < migrations/001_schema.sql
