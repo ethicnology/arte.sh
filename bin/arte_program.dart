@@ -60,6 +60,17 @@ class ArteProgram {
     return true;
   }
 
+  bool isEpisode() {
+    if (programId == null) return false;
+    var parts = programId!.split('-');
+    if (parts.length != 3) return false; // invalid id
+    if (parts[0].length != 6) return false; // first part lenght
+    if (parts[1].length != 3) return false; // second part lenght
+    if (parts[2].length != 1) return false; // last part lenght
+    if (int.parse(parts[1]) <= 0) return false; // not an episode
+    return true;
+  }
+
   factory ArteProgram.fromJson(Map<String, dynamic> json) {
     return ArteProgram(
       id: json['id'],
