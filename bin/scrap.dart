@@ -1,4 +1,5 @@
 import 'global.dart';
+import 'playlist_response.dart';
 import 'utils.dart';
 
 Future<Map<String, dynamic>?> scrap(
@@ -7,8 +8,8 @@ Future<Map<String, dynamic>?> scrap(
   String idArte,
 ) async {
   try {
-    var api = await _scrapApi(idThing, lang, idArte);
-    var www = await _scrapWww(idThing, lang, idArte);
+    var api = await scrapApi(lang, idArte);
+    var www = await scrapWww(lang, idArte);
     if (api['duration'] == null) throw Exception();
     return {
       'id_thing': idThing,
@@ -24,11 +25,7 @@ Future<Map<String, dynamic>?> scrap(
   }
 }
 
-Future<Map<String, dynamic>> _scrapApi(
-  int idThing,
-  String lang,
-  String idArte,
-) async {
+Future<Map<String, dynamic>> scrapApi(String lang, String idArte) async {
   var apiUrl = Uri.https('api.arte.tv', '/api/player/v2/config/$lang/$idArte');
   var apiRes = await retryUntilGet(apiUrl);
 
@@ -51,8 +48,7 @@ Future<Map<String, dynamic>> _scrapApi(
   };
 }
 
-Future<Map<String, dynamic>> _scrapWww(
-    int idThing, String lang, String idArte) async {
+Future<Map<String, dynamic>> scrapWww(String lang, String idArte) async {
   var wwwUrl = Uri.https(
       'www.arte.tv', '/api/rproxy/emac/v4/$lang/web/programs/$idArte');
   var wwwRes = await retryUntilGet(wwwUrl);
@@ -125,4 +121,40 @@ Future<Map<String, dynamic>> _scrapWww(
     'cover_high': highCover,
     'full_description': fullDescription,
   };
+}
+
+Future<PlaylistResponse?> getPlaylist(String lang, String idPlaylist) async {
+  try {
+    var url = 'https://api.arte.tv/api/player/v2/playlist/$lang/$idPlaylist';
+    var response = await retryUntilGet(Uri.parse(url));
+    return PlaylistResponse.fromJson(response);
+  } catch (e) {
+    log.severe('SCRAP␟$idPlaylist␟$lang');
+    return null;
+  }
+}
+
+Future<Set<String>> getCollectionIds(String idCollection) async {
+  var url =
+      'https://www.arte.tv/api/rproxy/emac/v4/fr/web/collections/$idCollection';
+  var res = await retryUntilGet(Uri.parse(url));
+
+  var seasons = <String>{};
+  var zones = res['value']['zones'];
+  for (var i = 2; i < zones.length - 4; i++) {
+    var zone = zones[i];
+    var code = zone['code'].split('_');
+    var seasonId = code.last;
+    var collecId = code[code.length - 2];
+
+    if (idCollection != collecId)
+      throw Exception('SCRAP␟$idCollection != $collecId');
+
+    seasons.add(seasonId);
+  }
+  if (seasons.isEmpty) {
+    throw Exception('SCRAP␟no_seasons');
+  } else {
+    return seasons;
+  }
 }
