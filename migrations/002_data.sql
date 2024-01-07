@@ -38,7 +38,7 @@ COPY public.language (id, created_at, tag) FROM stdin;
 
 COPY public.type (id, created_at, label) FROM stdin;
 1	2023-12-14 00:30:22.192734+00	film
-2	2023-12-14 00:30:42.413291+00	series
+2	2023-12-14 00:30:42.413291+00	collection
 3	2023-12-14 00:30:49.829222+00	episode
 \.
 
