@@ -23,3 +23,8 @@ final supabase = SupabaseClient(_url!, _key!);
 
 final covers = join(path!, 'covers');
 final subtitles = join(path!, 'subtitles');
+
+late int arteProviderId;
+late int filmTypeId;
+late int episodeTypeId;
+late int collectionTypeId;

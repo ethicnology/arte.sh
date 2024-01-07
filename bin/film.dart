@@ -8,17 +8,15 @@ import 'table_info.dart';
 import 'table_title.dart';
 import 'validate.dart';
 
-Future<void> collectFilm(String idArte, int idType, int idProvider) async {
-  try {
-    Validate.idFilm(idArte);
-    log.info('COLLECT␟$idArte');
-  } catch (e) {
+Future<void> collectFilm(String idArte) async {
+  if (!Validate.isFilm(idArte)) {
     log.warning('UNVALID␟$idArte');
     return;
   }
+  log.info('COLLECT␟$idArte');
 
   // Check if thing already created if no create it
-  final idThing = await Thing.getIdOrInsert(idType, idArte);
+  final idThing = await Thing.getIdOrInsert(filmTypeId, idArte);
 
   // Store each title, subtitle, description per language
   var infos = <Info>[];
@@ -74,5 +72,5 @@ Future<void> collectFilm(String idArte, int idType, int idProvider) async {
   await info.insert();
 
   await extractSubtitles(idArte);
-  await collectSubtitles(idArte, idProvider);
+  await collectSubtitles(idArte, arteProviderId);
 }

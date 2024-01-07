@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:logging_colorful/logging_colorful.dart';
 
+import 'arte_program.dart';
 import 'catalog.dart';
+import 'collect.dart';
 import 'table_provider.dart';
 import 'table_type.dart';
-import 'film.dart';
 import 'global.dart';
 import 'table_thing.dart';
 import 'utils.dart';
@@ -31,53 +32,59 @@ Future<void> main(List<String> args) async {
   langtags = await getLangtagIds();
   Validate.languages(langtags);
 
+  arteProviderId = await Provider.getId('arte');
+  filmTypeId = await Type.getId('film');
+  collectionTypeId = await Type.getId('collection');
+  episodeTypeId = await Type.getId('episode');
+
   // CLI
   var parser = ArgParser();
-  parser.addOption('mode', abbr: 'm', help: 'film', mandatory: true);
   parser.addOption('arte', abbr: 'a', help: '083874-000-A');
+  parser.addOption('slug', abbr: 's', help: 'SUBCATEGORY_FLM');
   parser.addFlag('force', defaultsTo: false, help: 're-collect all catalog');
   var cli = parser.parse(args);
-  String mode = cli['mode'];
   String? idArte = cli['arte'];
+  String? slug = cli['slug'];
   bool force = cli['force'];
-
-  // validate cli arguments
-  if (!['film'].contains(mode)) throw Exception('wrong mode');
-  final idType = await Type.getId(mode); // film/series/episode
-  final idProvider = await Provider.getId('arte');
 
   // starting…
   log.info('START␟${DateTime.now().toIso8601String()}');
-  log.finest('MODE:␟$mode␟ARTE:␟$idArte␟FORCE:␟$force');
+  log.finest('SLUG:␟$slug␟ARTE:␟$idArte␟FORCE:␟$force');
 
-  if (mode == 'film') {
-    if (idArte != null) {
-      var isStored = await Thing.isStored(idArte);
-      if (isStored == false) {
-        await collectFilm(idArte, idType, idProvider);
-      } else {
-        log.warning('STORED␟$isStored␟FORCE␟$force␟$idArte');
-        if (isStored && force) await collectFilm(idArte, idType, idProvider);
-        // DO NOTHING if not forced
-      }
+  if (idArte != null) {
+    var isStored = await Thing.isStored(idArte);
+    if (isStored == false) {
+      await collect(idArte);
     } else {
-      var things = await Thing.all();
-      var idsArte = things.map((item) => item['arte']).toSet();
-
-      var docs = await scrapCatalog('DOR');
-      var cinema = await scrapCatalog('SUBCATEGORY_FLM');
-      var catalog = <String>{};
-      for (var e in [...docs, ...cinema]) {
-        if (e.isFilm() && e.programId != null) catalog.add(e.programId!);
-      }
-
-      Set<String> collect = catalog.difference(idsArte);
-      if (force) collect = catalog.toSet();
-      log.info('COLLECT␟${collect.length}␟films');
-
-      for (var idArte in collect) await collectFilm(idArte, idType, idProvider);
+      log.warning('STORED␟$isStored␟FORCE␟$force␟$idArte');
+      if (isStored && force) await collect(idArte);
+      // DO NOTHING if not forced
     }
+  } else {
+    var things = await Thing.all();
+    var idsArte = things.map((item) => item['arte']).toSet();
+
+    var slugs = ['DOR', 'SUBCATEGORY_SES', 'SUBCATEGORY_FLM'];
+    if (slug != null) slugs = [slug];
+
+    var categories = <ArteProgram>[];
+    for (var item in slugs) {
+      categories.addAll(await scrapCatalog(item));
+    }
+
+    var catalog = <String>{};
+    for (var e in categories) {
+      var id = e.programId;
+      if (Validate.isFilm(id) || Validate.isCollection(id)) catalog.add(id!);
+    }
+
+    Set<String> toCollect = catalog.difference(idsArte);
+    if (force) toCollect = catalog.toSet();
+    log.info('COLLECT␟${toCollect.length}␟items');
+
+    for (var idArte in toCollect) await collect(idArte);
   }
+
   log.info('END␟${DateTime.now().toIso8601String()}');
   exit(0);
 }
