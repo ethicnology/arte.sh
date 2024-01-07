@@ -8,7 +8,7 @@ import 'arte_program.dart';
 import 'table_language.dart';
 
 Future<Map<String, dynamic>> retryUntilGet(Uri url) async {
-  await Future.delayed(Duration(seconds: 2));
+  await Future.delayed(Duration(seconds: 1));
 
   var ip = ips[random.nextInt(ips.length)]; // bypass geoblocking
 
