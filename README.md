@@ -22,6 +22,11 @@ psql -h localhost -U postgres -d postgres < migrations/001_schema.sql
 psql -h localhost -U postgres -d postgres < migrations/002_data.sql
 ```
 
+**dump** database `schema only`
+```sh
+pg_dump -h localhost -U postgres -d postgres -t link --schema-only > migrations/003_table_link.sql
+```
+
 **dump** database `data only`
 ```sh
 pg_dump -h localhost -U postgres -n public --data-only > data.sql
@@ -29,8 +34,8 @@ pg_dump -h localhost -U postgres -n public --data-only > data.sql
 
 # Usage
 ```sh
-arte.sh --mode film
-arte.sh --mode film --force
-arte.sh --mode film --arte 083874-000-A
+arte.sh
+arte.sh --force
+arte.sh --arte 083874-000-A
 ```
 
