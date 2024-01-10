@@ -18,7 +18,6 @@ Future collectRecursiveCollections(String idCollection) async {
   var nbEpisodes = await collectCollection(idCollection);
   final idThingCollection =
       await Thing.getIdOrInsert(collectionTypeId, idCollection);
-  print(nbEpisodes);
 
   if (nbEpisodes == 0) {
     var ids = await getCollectionIds(idCollection);
