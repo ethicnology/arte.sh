@@ -5,14 +5,14 @@
 pg_dump -h localhost -U postgres -d postgres -n public > 004_backup_schema_public_with_data.sql
 ```
 
-### restore backup
+### (if needed) restore backup
 ```sh
 psql -h localhost -U postgres -d postgres < 004_backup_schema_public_with_data.sql
 ```
 
 ## rename `cover` table `old_cover`
-```sql
-ALTER TABLE cover RENAME TO old_cover;
+```sh
+psql -h localhost -U postgres -d postgres -c "ALTER TABLE public.cover RENAME TO old_cover"
 ```
 
 ## dump `old_cover`
@@ -30,7 +30,7 @@ psql -h localhost -U postgres -d postgres < 004_table_file.sql
 psql -h localhost -U postgres -d postgres < 004_table_cover.sql
 ```
 
-## generate datasets from the `old_cover` dump
+## generate new datasets from the `old_cover` dump
 ```sh
 cat data_table_old_cover.tsv | python 004_main.py 
 ```
@@ -46,8 +46,17 @@ cat data_table_file.tsv | sort -u > sorted_data_table_file.tsv
 awk '!seen[$1,$3]++' data_table_cover.tsv > sorted_data_table_cover.tsv
 ```
 
+## insert preprocessed data using `psql`
+```sh
+psql -h localhost -U postgres -c "\copy public.file (hash, data) FROM 'sorted_data_table_file.tsv' DELIMITER E'\t'"
+```
 
-## OR… insert the data using `dbeaver` to skip errors (lazy)
+```sh
+psql -h localhost -U postgres -c "\copy public.cover (id_thing, id_lang, hash_file) FROM 'sorted_data_table_cover.tsv' DELIMITER E'\t'"
+```
+
+
+<!-- ## OR… insert the data using `dbeaver` to skip errors (lazy)
 
 ### using dbeaver import `data_table_file` into `file` table using mapping:
 - first value with column `hash`
@@ -56,17 +65,37 @@ awk '!seen[$1,$3]++' data_table_cover.tsv > sorted_data_table_cover.tsv
 ### using dbeaver import `data_table_cover` into `cover` table using mapping:
 - first value with column `id_thing`
 - second value with column `id_lang`
-- last value with column `hash_file`
+- last value with column `hash_file` -->
 
 ## verify!
+
+### file
 The `row count` (dbeaver) in table `file` should be equal to number lines in `data_table_file.tsv` without duplicates.
 ```sh
 cat data_table_file.tsv | sort -u | wc -l
 ```
 
+```sh
+psql -h localhost -U postgres -c "SELECT COUNT(id) FROM public.file"
+```
+
+### cover
 The `row count` (dbeaver) in table `cover` should be equal to number lines in `data_table_cover.tsv` without duplicates `hash_file` for the same `id_thing`
 ```sh
-sort -t$'\t' -k1,1 -k3,3 -u data_table_cover.tsv | wc -l 
+sort -t$'\t' -k1,1 -k3,3 -u data_table_cover.tsv | wc -l
+```
+
+```sh
+psql -h localhost -U postgres -c "SELECT COUNT(id) FROM public.cover"
+```
+
+## deploy the new code version
+
+**connect to the prod**
+
+```sh
+git pull
+dart compile exe bin/arte.dart  -o ~/ARTE/arte.sh
 ```
 
 ## clean if verification succeed
