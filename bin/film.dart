@@ -29,14 +29,16 @@ Future<void> collectFilm(String idArte) async {
       descriptions.add(extractDescription(scrap: scrapped));
       infos.add(extractInfo(scrap: scrapped));
       if (lang == 'fr') {
-        var coverNoText = await extractCover(scrap: scrapped, withText: false);
-        await coverNoText?.insert();
-        coverNoText?.toFile('$idArte.webp');
+        var image = await extractImage(scrap: scrapped, withText: false);
+        await image?.file.insert();
+        await image?.cover.insert();
+        image?.file.save(covers, '$idArte.webp');
       }
       if (['fr', 'de', 'en'].contains(lang)) {
-        var coverWithText = await extractCover(scrap: scrapped, withText: true);
-        await coverWithText?.insert();
-        coverWithText?.toFile('$idArte.$lang.webp');
+        var textImage = await extractImage(scrap: scrapped, withText: true);
+        await textImage?.file.insert();
+        await textImage?.cover.insert();
+        textImage?.file.save(covers, '$idArte.$lang.webp');
       }
     }
   }

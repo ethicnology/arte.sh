@@ -1,10 +1,11 @@
+import 'data_file.dart';
 import 'global.dart';
 import 'table_cover.dart';
 import 'table_description.dart';
 import 'table_info.dart';
 import 'table_title.dart';
 
-Future<Cover?> extractCover(
+Future<({DataFile file, Cover cover})?> extractImage(
     {required Map<String, dynamic> scrap, required bool withText}) async {
   try {
     String url = scrap['cover_high'];

@@ -56,13 +56,14 @@ Future collectEpisode(
 
     var coverUrl = item.images?.first.url;
     if (coverUrl != null) {
-      var cover = await Cover.download(
+      var image = await Cover.download(
           idThing: idThing,
           lang: lang,
           withText: false,
           url: Uri.parse(coverUrl));
-      await cover.insert();
-      cover.toFile('$idEpisode.webp');
+      await image.file.insert();
+      await image.cover.insert();
+      image.file.save(covers, '$idEpisode.webp');
     }
     await extractSubtitles(idEpisode);
     await collectSubtitles(idEpisode, arteProviderId);

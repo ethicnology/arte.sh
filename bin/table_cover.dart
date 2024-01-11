@@ -1,19 +1,16 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:http/http.dart';
-
 import 'global.dart';
+import 'data_file.dart';
 
 class Cover {
   static const table = 'cover';
   int idThing;
   int idLang;
-  String file; // base64
+  String hashFile;
 
-  Cover._({required this.idThing, required this.idLang, required this.file});
+  Cover._(
+      {required this.idThing, required this.idLang, required this.hashFile});
 
-  static Future<Cover> download({
+  static Future<({DataFile file, Cover cover})> download({
     required int idThing,
     required String lang,
     required bool withText,
@@ -24,18 +21,16 @@ class Cover {
       var fhd = url.path.replaceFirst(RegExp(r'\d{2,4}x\d{2,4}'), '1920x1080');
       url = url.replace(path: fhd);
 
-      final response = await get(url);
-      if (response.statusCode == 200) {
-        var bytes = response.bodyBytes;
-        return Cover._(
+      var file = await DataFile.download(url: url);
+
+      return (
+        file: file,
+        cover: Cover._(
           idThing: idThing,
           idLang: withText ? langtags[lang]! : langtags['und']!,
-          file: base64.encode(bytes),
-        );
-      } else {
-        log.severe('cover␟${response.statusCode}');
-        throw Exception();
-      }
+          hashFile: file.hash,
+        )
+      );
     } catch (e) {
       log.severe('cover␟${e.toString()}');
       throw Exception();
@@ -44,18 +39,16 @@ class Cover {
 
   Future<bool> insert() async {
     try {
-      var insert = await supabase.from(table).upsert(
-        {'id_thing': idThing, 'id_lang': idLang, 'file': file},
-      ).select();
+      var insert = await supabase.from(table).upsert({
+        'id_thing': idThing,
+        'id_lang': idLang,
+        'hash_file': hashFile
+      }).select();
       log.fine('$idThing␟$table␟${insert.first['id']}');
       return true;
     } catch (e) {
       log.warning('$idThing␟$table␟${e.toString()}');
       return false;
     }
-  }
-
-  Future<File> toFile(String filename) async {
-    return await File('$covers/$filename').writeAsBytes(base64.decode(file));
   }
 }

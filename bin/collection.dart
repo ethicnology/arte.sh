@@ -66,22 +66,24 @@ Future<int> collectCollection(String idCollection) async {
     var coverUrl = playlist.metadata.images?.first.url;
     if (coverUrl != null) {
       if (lang == 'fr') {
-        var cover = await Cover.download(
+        var image = await Cover.download(
             idThing: idThingCollection,
             lang: lang!,
             withText: false,
             url: Uri.parse(coverUrl));
-        await cover.insert();
-        cover.toFile('$idCollection.webp');
+        await image.file.insert();
+        await image.cover.insert();
+        image.file.save(covers, '$idCollection.webp');
       }
       if (['fr', 'de', 'en'].contains(lang)) {
-        var coverWithText = await Cover.download(
+        var textImage = await Cover.download(
             idThing: idThingCollection,
             lang: lang!,
             withText: true,
             url: Uri.parse(coverUrl));
-        await coverWithText.insert();
-        coverWithText.toFile('$idCollection.$lang.webp');
+        await textImage.file.insert();
+        await textImage.cover.insert();
+        textImage.file.save(covers, '$idCollection.$lang.webp');
       }
     }
   }
