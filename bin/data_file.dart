@@ -37,7 +37,7 @@ class DataFile {
       var insert = await supabase
           .from(table)
           .insert({'hash': hash, 'data': data}).select();
-      log.fine('$hash␟$table␟${insert.first['id']}');
+      log.fine('${insert.first['id']}␟$table␟$hash');
       return true;
     } catch (e) {
       log.warning('$hash␟$table␟${e.toString()}');
