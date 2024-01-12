@@ -32,13 +32,13 @@ Future<void> collectFilm(String idArte) async {
         var image = await extractImage(scrap: scrapped, withText: false);
         await image?.file.insert();
         await image?.cover.insert();
-        image?.file.save(covers, '$idArte.webp');
+        await image?.file.save(covers, '$idArte.webp');
       }
       if (['fr', 'de', 'en'].contains(lang)) {
         var textImage = await extractImage(scrap: scrapped, withText: true);
         await textImage?.file.insert();
         await textImage?.cover.insert();
-        textImage?.file.save(covers, '$idArte.$lang.webp');
+        await textImage?.file.save(covers, '$idArte.$lang.webp');
       }
     }
   }

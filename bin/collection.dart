@@ -73,7 +73,7 @@ Future<int> collectCollection(String idCollection) async {
             url: Uri.parse(coverUrl));
         await image.file.insert();
         await image.cover.insert();
-        image.file.save(covers, '$idCollection.webp');
+        await image.file.save(covers, '$idCollection.webp');
       }
       if (['fr', 'de', 'en'].contains(lang)) {
         var textImage = await Cover.download(
@@ -83,7 +83,7 @@ Future<int> collectCollection(String idCollection) async {
             url: Uri.parse(coverUrl));
         await textImage.file.insert();
         await textImage.cover.insert();
-        textImage.file.save(covers, '$idCollection.$lang.webp');
+        await textImage.file.save(covers, '$idCollection.$lang.webp');
       }
     }
   }

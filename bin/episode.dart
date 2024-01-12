@@ -63,7 +63,7 @@ Future collectEpisode(
           url: Uri.parse(coverUrl));
       await image.file.insert();
       await image.cover.insert();
-      image.file.save(covers, '$idEpisode.webp');
+      await image.file.save(covers, '$idEpisode.webp');
     }
     await extractSubtitles(idEpisode);
     await collectSubtitles(idEpisode, arteProviderId);
