@@ -16,10 +16,11 @@ ALTER ROLE postgres SUPERUSER
 ALTER ROLE postgres NOSUPERUSER
 ```
 
-**restore dump** schema and basic data
+**restore migrations**
 ```sh
 psql -h localhost -U postgres -d postgres < migrations/001_schema.sql
 psql -h localhost -U postgres -d postgres < migrations/002_data.sql
+…
 ```
 
 **dump** database `schema only`
@@ -35,7 +36,8 @@ pg_dump -h localhost -U postgres -n public --data-only > data.sql
 # Usage
 ```sh
 arte.sh
-arte.sh --force
+arte.sh --retry
 arte.sh --arte 083874-000-A
+arte.sh --arte 083874-000-A --force
 ```
 
