@@ -1,5 +1,5 @@
 import 'global.dart';
-import 'data_file.dart';
+import 'table_file.dart';
 
 class Cover {
   static const table = 'cover';
