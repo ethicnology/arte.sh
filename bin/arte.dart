@@ -40,19 +40,19 @@ Future<void> main(List<String> args) async {
 
   // CLI
   var parser = ArgParser();
-  parser.addOption('arte', abbr: 'a', help: '083874-000-A');
+  parser.addOption('id', help: '083874-000-A');
   parser.addOption('slug', abbr: 's', help: 'SUBCATEGORY_FLM');
   parser.addFlag('retry', defaultsTo: false, help: 're-collect empty things');
   parser.addFlag('force', defaultsTo: false, help: 're-collect all catalog');
   var cli = parser.parse(args);
-  String? idArte = cli['arte'];
+  String? idArte = cli['id'];
   String? slug = cli['slug'];
   bool force = cli['force'];
   bool retry = cli['retry'];
 
   // starting…
   log.info('START␟${DateTime.now().toIso8601String()}');
-  log.finest('SLUG:␟$slug␟ARTE:␟$idArte␟FORCE:␟$force');
+  log.finest('SLUG:␟$slug␟ARTE:␟$idArte␟FORCE:␟$force␟RETRY:␟$retry');
 
   if (retry) {
     await retryMissings();

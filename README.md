@@ -37,7 +37,7 @@ pg_dump -h localhost -U postgres -n public --data-only > data.sql
 ```sh
 arte.sh
 arte.sh --retry
-arte.sh --arte 083874-000-A
-arte.sh --arte 083874-000-A --force
+arte.sh --id 083874-000-A
+arte.sh --id 083874-000-A --force
 ```
 
