@@ -1,4 +1,4 @@
-import 'global.dart';
+import '../global.dart';
 
 class Language {
   static const table = 'language';

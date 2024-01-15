@@ -1,5 +1,5 @@
 import 'global.dart';
-import 'rpc.dart';
+import 'database/rpc.dart';
 import 'subtitles.dart';
 import 'validate.dart';
 

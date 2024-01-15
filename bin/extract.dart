@@ -1,9 +1,9 @@
-import 'table_file.dart';
+import 'database/table_file.dart';
 import 'global.dart';
-import 'table_cover.dart';
-import 'table_description.dart';
-import 'table_info.dart';
-import 'table_title.dart';
+import 'database/table_cover.dart';
+import 'database/table_description.dart';
+import 'database/table_info.dart';
+import 'database/table_title.dart';
 
 Future<({DataFile file, Cover cover})?> extractImage(
     {required Map<String, dynamic> scrap, required bool withText}) async {

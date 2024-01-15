@@ -1,4 +1,4 @@
-import 'global.dart';
+import '../global.dart';
 import 'table_file.dart';
 
 class Cover {

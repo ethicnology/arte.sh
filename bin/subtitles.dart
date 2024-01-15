@@ -1,6 +1,6 @@
 import 'global.dart';
-import 'table_subtitles.dart';
-import 'table_thing.dart';
+import 'database/table_subtitles.dart';
+import 'database/table_thing.dart';
 import 'utils.dart';
 import 'package:path/path.dart' as path;
 

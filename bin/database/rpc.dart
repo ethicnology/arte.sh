@@ -1,4 +1,4 @@
-import 'global.dart';
+import '../global.dart';
 
 class Rpc {
   static Future<Set<({BigInt id, String arte})>>

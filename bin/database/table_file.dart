@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart';
 
-import 'global.dart';
+import '../global.dart';
 
 class DataFile {
   static const table = 'file';

@@ -1,10 +1,10 @@
-import 'table_thing.dart';
+import 'database/table_thing.dart';
 import 'extract.dart';
 import 'global.dart';
 import 'scrap.dart';
 import 'subtitles.dart';
-import 'table_description.dart';
-import 'table_title.dart';
+import 'database/table_description.dart';
+import 'database/table_title.dart';
 import 'validate.dart';
 
 Future<void> collectFilm(String idArte) async {

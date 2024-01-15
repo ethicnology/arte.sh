@@ -7,10 +7,10 @@ import 'arte_program.dart';
 import 'catalog.dart';
 import 'collect.dart';
 import 'retry.dart';
-import 'table_provider.dart';
-import 'table_type.dart';
+import 'database/table_provider.dart';
+import 'database/table_type.dart';
 import 'global.dart';
-import 'table_thing.dart';
+import 'database/table_thing.dart';
 import 'utils.dart';
 import 'validate.dart';
 

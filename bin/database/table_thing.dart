@@ -1,4 +1,4 @@
-import 'global.dart';
+import '../global.dart';
 
 class Thing {
   static const table = 'thing';

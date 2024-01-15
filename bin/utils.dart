@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 
 import 'global.dart';
 import 'arte_program.dart';
-import 'table_language.dart';
+import 'database/table_language.dart';
 
 Future<Map<String, dynamic>> retryUntilGet(Uri url) async {
   await Future.delayed(Duration(seconds: 1));

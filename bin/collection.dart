@@ -2,11 +2,11 @@ import 'episode.dart';
 import 'global.dart';
 import 'playlist_response.dart';
 import 'scrap.dart';
-import 'table_cover.dart';
-import 'table_description.dart';
-import 'table_link.dart';
-import 'table_thing.dart';
-import 'table_title.dart';
+import 'database/table_cover.dart';
+import 'database/table_description.dart';
+import 'database/table_link.dart';
+import 'database/table_thing.dart';
+import 'database/table_title.dart';
 import 'validate.dart';
 
 Future collectRecursiveCollections(String idCollection) async {
