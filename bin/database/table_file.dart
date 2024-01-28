@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart';
+import 'package:supabase/supabase.dart';
 
 import '../global.dart';
 
@@ -40,7 +41,9 @@ class DataFile {
       log.fine('${insert.first['id']}␟$table␟$hash');
       return true;
     } catch (e) {
-      log.warning('$hash␟$table␟${e.toString()}');
+      var error = e;
+      e is PostgrestException && e.details != null ? error = e.details! : null;
+      log.warning('$hash␟$table␟${error.toString()}');
       return false;
     }
   }

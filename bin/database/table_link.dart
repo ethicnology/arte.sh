@@ -1,3 +1,5 @@
+import 'package:supabase/supabase.dart';
+
 import '../global.dart';
 
 class Link {
@@ -15,7 +17,9 @@ class Link {
       log.fine('$idParent␟$table␟$idChild␟${insert.first['id']}');
       return true;
     } catch (e) {
-      log.warning('$idParent␟$table␟$idChild␟${e.toString()}');
+      var error = e;
+      e is PostgrestException && e.details != null ? error = e.details! : null;
+      log.warning('$idParent␟$table␟$idChild␟${error.toString()}');
       return false;
     }
   }

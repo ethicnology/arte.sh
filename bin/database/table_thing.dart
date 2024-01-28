@@ -1,3 +1,5 @@
+import 'package:supabase/supabase.dart';
+
 import '../global.dart';
 
 class Thing {
@@ -36,7 +38,9 @@ class Thing {
         return newThing.first['id'];
       }
     } catch (e) {
-      log.warning('FETCH␟$table␟$arteId␟${e.toString()}');
+      var error = e;
+      e is PostgrestException && e.details != null ? error = e.details! : null;
+      log.warning('FETCH␟$table␟$arteId␟${error.toString()}');
       throw Exception();
     }
   }

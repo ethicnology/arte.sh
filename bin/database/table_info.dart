@@ -1,3 +1,5 @@
+import 'package:supabase/supabase.dart';
+
 import '../global.dart';
 
 class Info {
@@ -38,7 +40,9 @@ class Info {
       log.fine('$idThing␟$table␟${insert.first['id']}');
       return true;
     } catch (e) {
-      log.warning('$idThing␟$table␟${e.toString()}');
+      var error = e;
+      e is PostgrestException && e.details != null ? error = e.details! : null;
+      log.warning('$idThing␟$table␟${error.toString()}');
       return false;
     }
   }
