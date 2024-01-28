@@ -139,17 +139,18 @@ Future<Set<String>> getCollectionIds(String idCollection) async {
   var res = await retryUntilGet(Uri.parse(url));
 
   var seasons = <String>{};
-  var zones = res['value']['zones'];
-  for (var i = 2; i < zones.length - 4; i++) {
-    var zone = zones[i];
-    var code = zone['code'].split('_');
+  for (var zone in res['value']['zones']) {
+    var data = zone['content']['data'] as List;
+    var code = zone['code'].split('_') as List;
     var seasonId = code.last;
     var collecId = code[code.length - 2];
 
-    if (idCollection != collecId)
-      throw Exception('SCRAP␟$idCollection != $collecId');
-
-    seasons.add(seasonId);
+    if (idCollection == collecId && data.isNotEmpty) {
+      log.info('SCRAP␟collection_ids␟$seasonId␟${data.length}␟episodes');
+      seasons.add(seasonId);
+    } else {
+      log.severe('SCRAP␟collection_ids␟$idCollection␟!=␟$collecId');
+    }
   }
   if (seasons.isEmpty) {
     throw Exception('SCRAP␟no_seasons');
