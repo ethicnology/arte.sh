@@ -44,7 +44,6 @@ Future<Map<String, dynamic>> scrapApi(String lang, String idArte) async {
     'duration': apiSeconds,
     'provider_id': apiProviderId,
     'cover_low': lowCover,
-    'stream': apiRes['data']['attributes']['streams'][0]['url']
   };
 }
 
