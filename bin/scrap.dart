@@ -30,12 +30,16 @@ Future<Map<String, dynamic>> scrapApi(String lang, String idArte) async {
   var apiRes = await retryUntilGet(apiUrl);
 
   Map<String, dynamic> apiMeta = apiRes['data']['attributes']['metadata'];
+  Map<String, dynamic> apiRights = apiRes['data']['attributes']['rights'];
+
   String? apiDescription = apiMeta['description'];
   String? apiTitle = apiMeta['title'];
   String? apiSubTitle = apiMeta['subtitle'];
   int? apiSeconds = apiMeta['duration']['seconds'];
   String? apiProviderId = apiMeta['providerId'];
   String? lowCover = apiMeta['images'][0]['url'];
+  String? begin = apiRights['begin'];
+  String? end = apiRights['end'];
 
   return {
     'title': apiTitle,
@@ -44,6 +48,8 @@ Future<Map<String, dynamic>> scrapApi(String lang, String idArte) async {
     'duration': apiSeconds,
     'provider_id': apiProviderId,
     'cover_low': lowCover,
+    'start': begin,
+    'stop': end,
   };
 }
 

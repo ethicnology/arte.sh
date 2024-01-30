@@ -1,3 +1,4 @@
+import 'database/table_availability.dart';
 import 'global.dart';
 import 'playlist_response.dart';
 import 'scrap.dart';
@@ -41,7 +42,17 @@ Future collectEpisode(
   if (lang == 'fr') {
     await Link(idParent: idThingCollection, idChild: idThing).insert();
 
+    var api = await scrapApi(lang, idEpisode);
     var www = await scrapWww(lang, idEpisode);
+
+    // Insert availability
+    if (api['start'] != null && api['stop'] != null) {
+      await Availability(
+        idThing: idThing,
+        start: DateTime.parse(api['start']),
+        stop: DateTime.parse(api['stop']),
+      ).insert();
+    }
 
     await Info(
       idThing: idThing,

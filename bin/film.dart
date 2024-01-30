@@ -1,3 +1,4 @@
+import 'database/table_availability.dart';
 import 'database/table_thing.dart';
 import 'extract.dart';
 import 'global.dart';
@@ -36,6 +37,15 @@ Future<void> collectFilm(String idArte) async {
         await image?.file.insert();
         await image?.cover.insert();
         await image?.file.save(covers, '$idArte.webp');
+
+        // Insert availability
+        if (scrapped['start'] != null && scrapped['stop'] != null) {
+          await Availability(
+            idThing: idThing,
+            start: DateTime.parse(scrapped['start']),
+            stop: DateTime.parse(scrapped['stop']),
+          ).insert();
+        }
       }
       if (['fr', 'de', 'en'].contains(lang)) {
         var textImage = await extractImage(scrap: scrapped, withText: true);
