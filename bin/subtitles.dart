@@ -1,6 +1,5 @@
 import 'global.dart';
 import 'database/table_subtitles.dart';
-import 'database/table_thing.dart';
 import 'utils.dart';
 import 'package:path/path.dart' as path;
 
@@ -18,12 +17,9 @@ extractSubtitles(String idArte) async {
   return stdout;
 }
 
-collectSubtitles(String idArte, int idProvider) async {
+collectSubtitles(String idArte, int idProvider, int idThing) async {
   var files = await listFiles(subtitles, idArte, 'vtt');
   if (files.isEmpty) return;
-
-  final thing = await Thing.get(idArte);
-  final idThing = thing['id'];
 
   var subs = <Subtitles>[];
   try {

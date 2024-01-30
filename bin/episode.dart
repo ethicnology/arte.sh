@@ -77,6 +77,6 @@ Future collectEpisode(
       await image.file.save(covers, '$idEpisode.webp');
     }
     await extractSubtitles(idEpisode);
-    await collectSubtitles(idEpisode, arteProviderId);
+    await collectSubtitles(idEpisode, arteProviderId, idThing);
   }
 }

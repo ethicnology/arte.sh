@@ -60,5 +60,5 @@ Future<void> collectFilm(String idArte) async {
   for (var descr in descriptions) await descr.insert();
 
   await extractSubtitles(idArte);
-  await collectSubtitles(idArte, arteProviderId);
+  await collectSubtitles(idArte, arteProviderId, idThing);
 }
