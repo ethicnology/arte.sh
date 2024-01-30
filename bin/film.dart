@@ -1,6 +1,7 @@
 import 'database/table_availability.dart';
+import 'database/table_cover.dart';
+import 'database/table_info.dart';
 import 'database/table_thing.dart';
-import 'extract.dart';
 import 'global.dart';
 import 'scrap.dart';
 import 'subtitles.dart';
@@ -19,24 +20,45 @@ Future<void> collectFilm(String idArte) async {
   final idThing = await Thing.getIdOrInsert(filmTypeId, idArte);
 
   // Store each title, subtitle, description per language
-  var titles = <Title>[];
-  var descriptions = <Description>[];
   for (var lang in arteLanguages) {
     var scrapped = await scrap(idThing, lang, idArte);
     if (scrapped != null) {
-      titles.add(extractTitle(scrap: scrapped));
-      descriptions.add(extractDescription(scrap: scrapped));
+      await Title(
+        idThing: scrapped['id_thing'],
+        idLang: scrapped['id_lang'],
+        label: scrapped['title'],
+      ).insert();
+
+      await Description(
+        idThing: scrapped['id_thing'],
+        idLang: scrapped['id_lang'],
+        subtitle: scrapped['subtitle'],
+        description: scrapped['description'],
+        fullDescription: scrapped['full_description'],
+      ).insert();
+
       if (lang == 'fr') {
         // insert info once source will be in french
         // because when i merged all languages it created duplicates "Allemagne", "Germany"…
-        var info = extractInfo(scrap: scrapped);
-        await info.insert();
+        await Info(
+          idThing: scrapped['id_thing'],
+          duration: scrapped['duration'],
+          years: scrapped['years'],
+          actors: scrapped['actors'],
+          authors: scrapped['authors'],
+          directors: scrapped['directors'],
+          countries: scrapped['countries'],
+          productors: scrapped['productors'],
+        ).insert();
 
         // insert a cover without text
-        var image = await extractImage(scrap: scrapped, withText: false);
-        await image?.file.insert();
-        await image?.cover.insert();
-        await image?.file.save(covers, '$idArte.webp');
+        await Cover.collect(
+          lang: scrapped['lang'],
+          idThing: scrapped['id_thing'],
+          idArte: scrapped['id_arte'],
+          url: scrapped['cover_high'],
+          text: false,
+        );
 
         // Insert availability
         if (scrapped['start'] != null && scrapped['stop'] != null) {
@@ -48,16 +70,16 @@ Future<void> collectFilm(String idArte) async {
         }
       }
       if (['fr', 'de', 'en'].contains(lang)) {
-        var textImage = await extractImage(scrap: scrapped, withText: true);
-        await textImage?.file.insert();
-        await textImage?.cover.insert();
-        await textImage?.file.save(covers, '$idArte.$lang.webp');
+        await Cover.collect(
+          lang: scrapped['lang'],
+          idThing: scrapped['id_thing'],
+          idArte: scrapped['id_arte'],
+          url: scrapped['cover_high'],
+          text: true,
+        );
       }
     }
   }
-
-  for (var title in titles) await title.insert();
-  for (var descr in descriptions) await descr.insert();
 
   await extractSubtitles(idArte);
   await collectSubtitles(idArte, arteProviderId, idThing);

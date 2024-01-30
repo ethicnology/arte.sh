@@ -59,4 +59,30 @@ class Cover {
       return false;
     }
   }
+
+  static Future<void> collect({
+    required String lang,
+    required int idThing,
+    required String idArte,
+    required String url,
+    required bool text,
+  }) async {
+    try {
+      var filename = '$idArte.webp';
+      if (text) filename = '$idArte.$lang.webp';
+
+      final image = await Cover.download(
+        lang: lang,
+        idThing: idThing,
+        url: Uri.parse(url),
+        withText: text,
+      );
+
+      await image.file.insert();
+      await image.cover.insert();
+      await image.file.save(covers, filename);
+    } catch (e) {
+      log.severe('$idThing␟extract_cover␟${e.toString()}');
+    }
+  }
 }
