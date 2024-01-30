@@ -8,13 +8,10 @@ import 'database/table_title.dart';
 Future<({DataFile file, Cover cover})?> extractImage(
     {required Map<String, dynamic> scrap, required bool withText}) async {
   try {
-    String url = scrap['cover_high'];
-    url = url.replaceAll('?type=TEXT&watermark=true', '');
-
     return Cover.download(
       lang: scrap['lang'],
       idThing: scrap['id_thing'],
-      url: Uri.parse(url),
+      url: Uri.parse(scrap['cover_high']),
       withText: withText,
     );
   } catch (e) {

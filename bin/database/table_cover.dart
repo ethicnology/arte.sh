@@ -19,6 +19,10 @@ class Cover {
     required Uri url,
   }) async {
     try {
+      url = Uri.parse(
+        url.toString().replaceAll('?type=TEXT&watermark=true', ''),
+      );
+
       if (withText) url = url.replace(queryParameters: {'type': 'TEXT'});
       var fhd = url.path.replaceFirst(RegExp(r'\d{2,4}x\d{2,4}'), '1920x1080');
       url = url.replace(path: fhd);
