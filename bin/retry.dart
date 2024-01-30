@@ -9,7 +9,7 @@ Future<void> retryMissings() async {
   for (var thing in thingsWithoutSubs) {
     if (Validate.isFilm(thing.arte) || Validate.isEpisode(thing.arte)) {
       await extractSubtitles(thing.arte);
-      await collectSubtitles(thing.arte, arteProviderId, thing.id.toInt());
+      await collectSubtitles(thing.arte, arteProviderId, thing.id);
     }
     if (Validate.isFilm(thing.arte)) countFilms += 1;
     if (Validate.isEpisode(thing.arte)) countEpisodes += 1;
