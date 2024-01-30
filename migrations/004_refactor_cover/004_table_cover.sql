@@ -25,8 +25,3 @@ GRANT ALL ON TABLE public.cover TO supabase_admin;
 GRANT ALL ON TABLE public.cover TO anon;
 GRANT ALL ON TABLE public.cover TO authenticated;
 GRANT ALL ON TABLE public.cover TO service_role;
-
-
--- Row level security
-
-ALTER TABLE public.cover ENABLE ROW LEVEL SECURITY;

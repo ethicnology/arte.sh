@@ -29,8 +29,3 @@ GRANT ALL ON TABLE public.file TO supabase_admin;
 GRANT ALL ON TABLE public.file TO anon;
 GRANT ALL ON TABLE public.file TO authenticated;
 GRANT ALL ON TABLE public.file TO service_role;
-
-
--- Row level security
-
-ALTER TABLE public.file ENABLE ROW LEVEL SECURITY;
