@@ -4,13 +4,13 @@ import 'package:args/args.dart';
 import 'package:logging_colorful/logging_colorful.dart';
 
 import 'arte_program.dart';
-import 'catalog.dart';
 import 'collect.dart';
 import 'retry.dart';
 import 'database/table_provider.dart';
 import 'database/table_type.dart';
 import 'global.dart';
 import 'database/table_thing.dart';
+import 'scrap.dart';
 import 'utils.dart';
 import 'validate.dart';
 
@@ -74,7 +74,7 @@ Future<void> main(List<String> args) async {
 
     var categories = <ArteProgram>[];
     for (var item in slugs) {
-      categories.addAll(await scrapCatalog(item));
+      categories.addAll(await Scrap.catalog(item));
     }
 
     var catalog = <String>{};
