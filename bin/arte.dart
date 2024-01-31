@@ -5,7 +5,6 @@ import 'package:logging_colorful/logging_colorful.dart';
 
 import 'arte_program.dart';
 import 'collect.dart';
-import 'retry.dart';
 import 'database/table_provider.dart';
 import 'database/table_type.dart';
 import 'global.dart';
@@ -42,21 +41,17 @@ Future<void> main(List<String> args) async {
   var parser = ArgParser();
   parser.addOption('id', help: '083874-000-A');
   parser.addOption('slug', abbr: 's', help: 'SUBCATEGORY_FLM');
-  parser.addFlag('retry', defaultsTo: false, help: 're-collect empty things');
   parser.addFlag('force', defaultsTo: false, help: 're-collect all catalog');
   var cli = parser.parse(args);
   String? idArte = cli['id'];
   String? slug = cli['slug'];
   bool force = cli['force'];
-  bool retry = cli['retry'];
 
   // starting…
   log.info('START␟${DateTime.now().toIso8601String()}');
-  log.finest('SLUG:␟$slug␟ARTE:␟$idArte␟FORCE:␟$force␟RETRY:␟$retry');
+  log.finest('SLUG:␟$slug␟ARTE:␟$idArte␟FORCE:␟$force');
 
-  if (retry) {
-    await retryMissings();
-  } else if (idArte != null) {
+  if (idArte != null) {
     var isStored = await Thing.isStored(idArte);
     if (isStored == false) {
       await collect(idArte);
