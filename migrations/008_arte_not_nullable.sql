@@ -1,0 +1,1 @@
+ALTER TABLE public.thing ALTER COLUMN arte SET NOT NULL;
