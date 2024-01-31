@@ -37,10 +37,10 @@ Future<int> collectCollection(String idCollection) async {
   }
   log.info('COLLECT␟$idCollection');
 
-  var collectionPlaylists = <PlaylistResponse>[];
+  var playlists = <PlaylistResponse>[];
   for (var lang in arteLanguages) {
     var playlist = await Scrap.playlist(lang, idCollection);
-    if (playlist != null) collectionPlaylists.add(playlist);
+    if (playlist != null) playlists.add(playlist);
   }
 
   // insert collection
@@ -48,7 +48,7 @@ Future<int> collectCollection(String idCollection) async {
       await Thing.getIdOrInsert(collectionTypeId, idCollection);
 
   // insert collection descriptions (multilingual)
-  for (var playlist in collectionPlaylists) {
+  for (var playlist in playlists) {
     var lang = playlist.metadata.language;
     await Description(
       idThing: idThingCollection,
@@ -87,18 +87,17 @@ Future<int> collectCollection(String idCollection) async {
   }
 
   // collect episodes if any
-  var nbEpisodes = collectionPlaylists.first.items.length;
-  if (nbEpisodes != 0) {
-    for (var playlist in collectionPlaylists) {
-      var lang = playlist.metadata.language!;
-      for (var item in playlist.items) {
-        var idEpisode = item.providerId;
-        if (idEpisode != null) {
+  var episodes = playlists.first.items;
+  if (episodes.isNotEmpty) {
+    for (var item in episodes) {
+      var idEpisode = item.providerId;
+      if (idEpisode != null) {
+        for (var lang in arteLanguages) {
           await collectEpisode(lang, idEpisode, idThingCollection);
         }
       }
     }
   }
 
-  return nbEpisodes;
+  return episodes.length;
 }

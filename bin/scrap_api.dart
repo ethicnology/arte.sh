@@ -25,18 +25,20 @@ class Api {
     var apiUrl =
         Uri.https('api.arte.tv', '/api/player/v2/config/$lang/$idArte');
     var apiRes = await retryUntilGet(apiUrl);
+    Map<String, dynamic> attributes = apiRes['data']['attributes'];
 
-    Map<String, dynamic> apiMeta = apiRes['data']['attributes']['metadata'];
-    Map<String, dynamic> apiRights = apiRes['data']['attributes']['rights'];
+    String? apiDescription = attributes['metadata']['description'];
+    String? apiTitle = attributes['metadata']['title'];
+    String? apiSubTitle = attributes['metadata']['subtitle'];
+    int? apiSeconds = attributes['metadata']['duration']['seconds'];
+    String? apiProviderId = attributes['metadata']['providerId'];
+    String? lowCover = attributes['metadata']['images'][0]['url'];
 
-    String? apiDescription = apiMeta['description'];
-    String? apiTitle = apiMeta['title'];
-    String? apiSubTitle = apiMeta['subtitle'];
-    int? apiSeconds = apiMeta['duration']['seconds'];
-    String? apiProviderId = apiMeta['providerId'];
-    String? lowCover = apiMeta['images'][0]['url'];
-    String? begin = apiRights['begin'];
-    String? end = apiRights['end'];
+    String? begin, end;
+    if (attributes['rights'] != null) {
+      begin = attributes['rights']['begin'];
+      end = attributes['rights']['end'];
+    }
 
     return Api._(
       title: apiTitle,

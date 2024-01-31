@@ -20,7 +20,7 @@ Future collectEpisode(
     log.warning('UNVALID␟$idEpisode');
     return;
   }
-  log.info('COLLECT␟$idEpisode');
+  log.info('COLLECT␟$idEpisode␟$lang');
 
   final idThing = await Thing.getIdOrInsert(episodeTypeId, idEpisode);
 
