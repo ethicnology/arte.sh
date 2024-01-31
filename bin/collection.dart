@@ -20,7 +20,7 @@ Future collectRecursiveCollections(String idCollection) async {
       await Thing.getIdOrInsert(collectionTypeId, idCollection);
 
   if (nbEpisodes == 0) {
-    var ids = await getCollectionIds(idCollection);
+    var ids = await Scrap.collectionIds(idCollection);
     for (var idSeason in ids) {
       await collectCollection(idSeason);
       final idThingSeason =
@@ -39,7 +39,7 @@ Future<int> collectCollection(String idCollection) async {
 
   var collectionPlaylists = <PlaylistResponse>[];
   for (var lang in arteLanguages) {
-    var playlist = await getPlaylist(lang, idCollection);
+    var playlist = await Scrap.playlist(lang, idCollection);
     if (playlist != null) collectionPlaylists.add(playlist);
   }
 

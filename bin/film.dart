@@ -21,60 +21,62 @@ Future<void> collectFilm(String idArte) async {
 
   // Store each title, subtitle, description per language
   for (var lang in arteLanguages) {
-    var scrapped = await scrap(idThing, lang, idArte);
+    var scrapped = await Scrap.fetch(idThing, lang, idArte);
     if (scrapped != null) {
       await Title(
-        idThing: scrapped['id_thing'],
-        idLang: scrapped['id_lang'],
-        label: scrapped['title'],
+        idThing: scrapped.idThing,
+        idLang: scrapped.idLang,
+        label: scrapped.api.title,
       ).insert();
 
       await Description(
-        idThing: scrapped['id_thing'],
-        idLang: scrapped['id_lang'],
-        subtitle: scrapped['subtitle'],
-        description: scrapped['description'],
-        fullDescription: scrapped['full_description'],
+        idThing: scrapped.idThing,
+        idLang: scrapped.idLang,
+        subtitle: scrapped.api.subtitle,
+        description: scrapped.api.description,
+        // TODO remove or split different endpoint shouldn't be in the same table
+        fullDescription: scrapped.www.fullDescription,
       ).insert();
 
       if (lang == 'fr') {
         // insert info once source will be in french
         // because when i merged all languages it created duplicates "Allemagne", "Germany"…
         await Info(
-          idThing: scrapped['id_thing'],
-          duration: scrapped['duration'],
-          years: scrapped['years'],
-          actors: scrapped['actors'],
-          authors: scrapped['authors'],
-          directors: scrapped['directors'],
-          countries: scrapped['countries'],
-          productors: scrapped['productors'],
+          idThing: scrapped.idThing,
+          // TODO remove or split different endpoint shouldn't be in the same table
+          duration: scrapped.api.duration,
+          years: scrapped.www.years,
+          actors: scrapped.www.actors,
+          authors: scrapped.www.authors,
+          directors: scrapped.www.directors,
+          countries: scrapped.www.countries,
+          productors: scrapped.www.productors,
         ).insert();
 
         // insert a cover without text
         await Cover.collect(
-          lang: scrapped['lang'],
-          idThing: scrapped['id_thing'],
-          idArte: scrapped['id_arte'],
-          url: scrapped['cover_high'],
+          lang: scrapped.lang,
+          idThing: scrapped.idThing,
+          idArte: scrapped.idArte,
+          url: scrapped.www.cover!,
           text: false,
         );
 
         // Insert availability
-        if (scrapped['start'] != null && scrapped['stop'] != null) {
+        if (scrapped.api.start != null && scrapped.api.stop != null) {
           await Availability(
             idThing: idThing,
-            start: DateTime.parse(scrapped['start']),
-            stop: DateTime.parse(scrapped['stop']),
+            start: DateTime.parse(scrapped.api.start!),
+            stop: DateTime.parse(scrapped.api.stop!),
           ).insert();
         }
       }
       if (['fr', 'de', 'en'].contains(lang)) {
         await Cover.collect(
-          lang: scrapped['lang'],
-          idThing: scrapped['id_thing'],
-          idArte: scrapped['id_arte'],
-          url: scrapped['cover_high'],
+          lang: scrapped.lang,
+          idThing: scrapped.idThing,
+          idArte: scrapped.idArte,
+          url: scrapped.www.cover!,
           text: true,
         );
       }

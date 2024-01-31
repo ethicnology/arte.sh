@@ -1,7 +1,8 @@
 import 'database/table_availability.dart';
 import 'global.dart';
 import 'playlist_response.dart';
-import 'scrap.dart';
+import 'scrap_api.dart';
+import 'scrap_www.dart';
 import 'subtitles.dart';
 import 'database/table_cover.dart';
 import 'database/table_description.dart';
@@ -42,27 +43,27 @@ Future collectEpisode(
   if (lang == 'fr') {
     await Link(idParent: idThingCollection, idChild: idThing).insert();
 
-    var api = await scrapApi(lang, idEpisode);
-    var www = await scrapWww(lang, idEpisode);
+    var api = await Api.scrap(lang, idEpisode);
+    var www = await Www.scrap(lang, idEpisode);
 
     // Insert availability
-    if (api['start'] != null && api['stop'] != null) {
+    if (api.start != null && api.stop != null) {
       await Availability(
         idThing: idThing,
-        start: DateTime.parse(api['start']),
-        stop: DateTime.parse(api['stop']),
+        start: DateTime.parse(api.start!),
+        stop: DateTime.parse(api.stop!),
       ).insert();
     }
 
     await Info(
       idThing: idThing,
       duration: item.duration?.inSeconds,
-      years: www['years'],
-      actors: www['actors'],
-      authors: www['authors'],
-      directors: www['directors'],
-      countries: www['countries'],
-      productors: www['productors'],
+      years: www.years,
+      actors: www.actors,
+      authors: www.authors,
+      directors: www.directors,
+      countries: www.countries,
+      productors: www.productors,
     ).insert();
 
     var coverUrl = item.images?.first.url;
