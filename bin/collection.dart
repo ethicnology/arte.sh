@@ -66,24 +66,22 @@ Future<int> collectCollection(String idCollection) async {
     var coverUrl = playlist.metadata.images?.first.url;
     if (coverUrl != null) {
       if (lang == 'fr') {
-        var image = await Cover.download(
-            idThing: idThingCollection,
-            lang: lang!,
-            withText: false,
-            url: Uri.parse(coverUrl));
-        await image.file.insert();
-        await image.cover.insert();
-        await image.file.save(covers, '$idCollection.webp');
+        await Cover.collect(
+          lang: lang!,
+          idThing: idThingCollection,
+          idArte: idCollection,
+          url: coverUrl,
+          text: false,
+        );
       }
       if (['fr', 'de', 'en'].contains(lang)) {
-        var textImage = await Cover.download(
-            idThing: idThingCollection,
-            lang: lang!,
-            withText: true,
-            url: Uri.parse(coverUrl));
-        await textImage.file.insert();
-        await textImage.cover.insert();
-        await textImage.file.save(covers, '$idCollection.$lang.webp');
+        await Cover.collect(
+          lang: lang!,
+          idThing: idThingCollection,
+          idArte: idCollection,
+          url: coverUrl,
+          text: true,
+        );
       }
     }
   }
@@ -94,7 +92,10 @@ Future<int> collectCollection(String idCollection) async {
     for (var playlist in collectionPlaylists) {
       var lang = playlist.metadata.language!;
       for (var item in playlist.items) {
-        await collectEpisode(lang, item, idThingCollection);
+        var idEpisode = item.providerId;
+        if (idEpisode != null) {
+          await collectEpisode(lang, idEpisode, idThingCollection);
+        }
       }
     }
   }

@@ -1,6 +1,5 @@
 import 'database/table_availability.dart';
 import 'global.dart';
-import 'playlist_response.dart';
 import 'scrap_api.dart';
 import 'scrap_www.dart';
 import 'subtitles.dart';
@@ -14,36 +13,36 @@ import 'validate.dart';
 
 Future collectEpisode(
   String lang,
-  PlaylistItem item,
+  String idEpisode,
   int idThingCollection,
 ) async {
-  var idEpisode = item.providerId;
   if (!Validate.isEpisode(idEpisode)) {
     log.warning('UNVALID␟$idEpisode');
     return;
   }
   log.info('COLLECT␟$idEpisode');
 
-  final idThing = await Thing.getIdOrInsert(episodeTypeId, idEpisode!);
+  final idThing = await Thing.getIdOrInsert(episodeTypeId, idEpisode);
+
+  var api = await Api.scrap(lang, idEpisode);
 
   await Description(
     idThing: idThing,
     idLang: langtags[lang]!,
-    subtitle: item.subtitle,
-    description: item.description,
+    subtitle: api.subtitle,
+    description: api.description,
   ).insert();
 
   await Title(
     idThing: idThing,
     idLang: langtags[lang]!,
-    label: item.title,
+    label: api.title,
   ).insert();
 
   // DO NOT REPEAT for each languages (performances)
   if (lang == 'fr') {
     await Link(idParent: idThingCollection, idChild: idThing).insert();
 
-    var api = await Api.scrap(lang, idEpisode);
     var www = await Www.scrap(lang, idEpisode);
 
     // Insert availability
@@ -57,7 +56,7 @@ Future collectEpisode(
 
     await Info(
       idThing: idThing,
-      duration: item.duration?.inSeconds,
+      duration: api.duration,
       years: www.years,
       actors: www.actors,
       authors: www.authors,
@@ -66,13 +65,12 @@ Future collectEpisode(
       productors: www.productors,
     ).insert();
 
-    var coverUrl = item.images?.first.url;
-    if (coverUrl != null) {
+    if (api.cover != null) {
       await Cover.collect(
         lang: lang,
         idThing: idThing,
         idArte: idEpisode,
-        url: coverUrl,
+        url: api.cover!,
         text: false,
       );
     }

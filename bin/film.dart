@@ -58,7 +58,7 @@ Future<void> collectFilm(String idArte) async {
           lang: scrapped.lang,
           idThing: scrapped.idThing,
           idArte: scrapped.idArte,
-          url: scrapped.www.cover!,
+          url: scrapped.api.cover!,
           text: false,
         );
 
@@ -76,7 +76,7 @@ Future<void> collectFilm(String idArte) async {
           lang: scrapped.lang,
           idThing: scrapped.idThing,
           idArte: scrapped.idArte,
-          url: scrapped.www.cover!,
+          url: scrapped.api.cover!,
           text: true,
         );
       }
