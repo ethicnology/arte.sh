@@ -33,9 +33,10 @@ Future<List<ArteProgram>> paginate(Map<String, dynamic> pagination) async {
   int total = pagination['totalCount'];
   String firstLink = pagination['links']['first'];
 
-  var firstUri = Uri.parse(firstLink
-      .replaceAll('api-internal', 'www')
-      .replaceAll('api/emac', 'api/rproxy/emac'));
+  var firstUri = Uri.parse(
+    'https://www.arte.tv${firstLink.replaceAll('api/emac', 'api/rproxy/emac')}',
+  );
+
   var params = Map<String, String>.from(firstUri.queryParameters);
 
   var programs = <ArteProgram>[];
