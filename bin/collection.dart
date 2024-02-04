@@ -92,8 +92,9 @@ Future<int> collectCollection(String idCollection) async {
     for (var item in episodes) {
       var idEpisode = item.providerId;
       if (idEpisode != null) {
-        for (var lang in arteLanguages) {
-          await collectEpisode(lang, idEpisode, idThingCollection);
+        for (var playlist in playlists) {
+          var lang = playlist.metadata.language;
+          await collectEpisode(lang!, idEpisode, idThingCollection);
         }
       }
     }
