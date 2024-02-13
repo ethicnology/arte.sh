@@ -9,11 +9,14 @@ import 'database/table_provider.dart';
 import 'database/table_type.dart';
 import 'global.dart';
 import 'database/table_thing.dart';
+import 'heal_checks.dart';
 import 'scrap.dart';
 import 'utils.dart';
 import 'validate.dart';
 
 Future<void> main(List<String> args) async {
+  await pingHealthCheck(start: true);
+
   // Logger
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
@@ -86,5 +89,8 @@ Future<void> main(List<String> args) async {
   }
 
   log.info('END␟${DateTime.now().toIso8601String()}');
+
+  await pingHealthCheck(start: false);
+
   exit(0);
 }

@@ -19,6 +19,7 @@ final _env = DotEnv(includePlatformEnvironment: true)..load();
 final _url = _env['SUPABASE_URL'];
 final _key = _env['SUPABASE_KEY'];
 final path = _env['OUTPUT_PATH'];
+final healthcheck = _env['HEALTHCHECK_URL'];
 final supabase = SupabaseClient(_url!, _key!);
 
 final covers = join(path!, 'covers');
