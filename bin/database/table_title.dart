@@ -17,6 +17,10 @@ class Title {
   });
 
   Future<bool> insert() async {
+    if (label == null || (label != null && label!.isEmpty)) {
+      log.severe('$idThing␟$table␟null_or_empty_label');
+      return false;
+    }
     try {
       var insert = await supabase.from(table).insert({
         'id_thing': idThing,
