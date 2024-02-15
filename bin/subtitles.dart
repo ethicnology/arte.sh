@@ -1,3 +1,4 @@
+import 'database/table_language.dart';
 import 'global.dart';
 import 'database/table_subtitles.dart';
 import 'utils.dart';
@@ -35,7 +36,10 @@ collectSubtitles(String idArte, int idProvider, int idThing) async {
 
         log.info('$idThing␟subtitles␟$lang␟found');
 
-        if (idLang == null) throw Exception('Language not found');
+        if (idLang == null) {
+          log.severe('$idThing␟subtitles␟$lang␟unknown_insert_language');
+          idLang = await Language(tag: lang).insert();
+        }
 
         subs.add(
           Subtitles(
