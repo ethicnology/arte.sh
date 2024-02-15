@@ -21,6 +21,8 @@ collectSubtitles(String idArte, int idProvider, int idThing) async {
   var files = await listFiles(subtitles, idArte, 'vtt');
   if (files.isEmpty) return;
 
+  log.info('$idThing␟subtitles␟${files.length}␟found_on_disk');
+
   var subs = <Subtitles>[];
   try {
     for (var file in files) {
@@ -28,7 +30,11 @@ collectSubtitles(String idArte, int idProvider, int idThing) async {
       var name = path.basename(file.path);
       var parts = name.split('.');
       if (idArte == parts.first && parts.length == 3) {
-        var idLang = langtags[parts[1]];
+        var lang = parts[1];
+        var idLang = langtags[lang];
+
+        log.info('$idThing␟subtitles␟$lang␟found');
+
         if (idLang == null) throw Exception('Language not found');
 
         subs.add(
