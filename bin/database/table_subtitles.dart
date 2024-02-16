@@ -9,6 +9,7 @@ class Subtitles {
   int idLang;
   String file;
   String ext;
+  bool? isClosedCaptions;
 
   Subtitles({
     required this.idThing,
@@ -16,18 +17,39 @@ class Subtitles {
     required this.idLang,
     required this.file,
     required this.ext,
+    this.isClosedCaptions,
   });
 
-  Future<bool> insert() async {
+  static Future<PostgrestList> getNullClosedCaptions(
+    int idThing,
+    int idLang,
+  ) async {
+    final subtitles = await supabase
+        .from(table)
+        .select('id')
+        .eq('id_thing', idThing)
+        .eq('id_lang', idLang)
+        .isFilter('is_closed_captions', null);
+    log.info(
+        '$idThing␟$table␟${subtitles.length}␟null_closed_captions␟lang:$idLang');
+    return subtitles;
+  }
+
+  Future<bool> upsert({int? id}) async {
+    var data = {
+      'id_thing': idThing,
+      'id_provider': idProvider,
+      'id_lang': idLang,
+      'file': file,
+      'ext': ext,
+      'is_closed_captions': isClosedCaptions
+    };
+    var op = 'insert';
+    if (id != null) data['id'] = id;
+    if (id != null) op = 'update';
     try {
-      var insert = await supabase.from(table).insert({
-        'id_thing': idThing,
-        'id_provider': idProvider,
-        'id_lang': idLang,
-        'file': file,
-        'ext': ext,
-      }).select();
-      log.fine('$idThing␟$table␟${insert.first['id']}');
+      var upsert = await supabase.from(table).upsert(data).select();
+      log.fine('$idThing␟$table␟${upsert.first['id']}␟$op');
       return true;
     } catch (e) {
       var error = e;
