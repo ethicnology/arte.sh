@@ -25,7 +25,7 @@ Future<Map<String, dynamic>> retryUntilGet(Uri url) async {
   }
   if (code == 200) return json.decode(response.body);
 
-  throw Exception('code: $code');
+  throw Exception('code: $code | url: $url');
 }
 
 Future<List<ArteProgram>> paginate(Map<String, dynamic> pagination) async {

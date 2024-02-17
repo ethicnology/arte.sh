@@ -67,7 +67,10 @@ Future<void> main(List<String> args) async {
     var things = await Thing.all();
     var idsArte = things.map((item) => item['arte']).toSet();
 
-    var slugs = ['DOR', 'SUBCATEGORY_SES', 'SUBCATEGORY_FLM'];
+    // DOR = Documentaries  –> /fr/videos/documentaires-et-reportages/
+    // FLM = Films          –> /fr/videos/cinema/
+    // SER = Series         –> /fr/videos/series-et-fictions/
+    var slugs = ['DOR', 'CATEGORY_SER', 'SUBCATEGORY_FLM'];
     if (slug != null) slugs = [slug];
 
     var categories = <ArteProgram>[];
