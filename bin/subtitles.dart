@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
+
 import 'global.dart';
 import 'database/table_subtitles.dart';
 import 'utils.dart';
@@ -52,11 +56,24 @@ collectSubtitles(String idArte, int idProvider, int idThing) async {
           idLang = langtags['und']!;
         }
 
-        // Check if there is a subtitles already registered
-        // with same idThing and idLang that has `is_closed_captions` = null
-        // if yes we will update instead of insert the data
-        final ids = await Subtitles.getNullClosedCaptions(idThing, idLang);
-        int? id = ids.length == 1 ? ids.first['id'] : null;
+        // If a the current subtitle is_closed_captions = true
+        // and DB contains a similar subtitle with is_closed_captions = false OR null
+        // we set id to make an update instead of insert.
+        int? id;
+        if (isClosedCaptions) {
+          var hashSubtitle = sha256.convert(utf8.encode(subtitle)).toString();
+          final subtitles = await Subtitles.get(idThing, idLang);
+          for (var row in subtitles) {
+            String dbSub = row['file'];
+            bool? isCC = row['is_closed_captions'];
+            if (isCC != true) {
+              var hashDbSub = sha256.convert(utf8.encode(dbSub)).toString();
+              if (hashSubtitle == hashDbSub) {
+                id = row['id'];
+              }
+            }
+          }
+        }
 
         // if id is null insert
         // if id is not null update

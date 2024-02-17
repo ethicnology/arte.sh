@@ -35,6 +35,16 @@ class Subtitles {
     return subtitles;
   }
 
+  static Future<PostgrestList> get(int idThing, int idLang) async {
+    final subtitles = await supabase
+        .from(table)
+        .select()
+        .eq('id_thing', idThing)
+        .eq('id_lang', idLang);
+    log.info('$idThing␟$table␟${subtitles.length}␟lang:$idLang');
+    return subtitles;
+  }
+
   Future<bool> upsert({int? id}) async {
     var data = {
       'id_thing': idThing,
