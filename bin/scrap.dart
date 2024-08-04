@@ -86,6 +86,8 @@ class Scrap {
   }
 
   static Future<List<ArteProgram>> catalog(String path) async {
+    List<ArteProgram> catalog = [];
+
     try {
       var url =
           Uri.https('www.arte.tv', '/api/rproxy/emac/v4/fr/web/pages/$path');
@@ -93,7 +95,6 @@ class Scrap {
       var response = await retryUntilGet(url);
       var zones = response['value']['zones'];
 
-      List<ArteProgram> catalog = [];
       for (var zone in zones) {
         var pagination = zone['content']['pagination'];
 
@@ -102,7 +103,7 @@ class Scrap {
           var total = pagination['totalCount'];
           programs = await paginate(pagination);
           if (programs.length != total) {
-            throw Exception('${programs.length}/$total');
+            log.warning('SCRAP␟$path␟${programs.length}/$total');
           }
         } else {
           programs = List<Map<String, dynamic>>.from(zone['content']['data'])
@@ -115,7 +116,7 @@ class Scrap {
       return catalog;
     } catch (e) {
       log.severe('SCRAP␟$path␟${e.toString()}');
-      throw Exception();
+      return catalog;
     }
   }
 }

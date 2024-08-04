@@ -35,6 +35,10 @@ pg_dump -h localhost -U postgres -n public --data-only > data.sql
 
 # Usage
 ```sh
+dart compile exe bin/arte.dart  -o ~/ARTE/arte.sh
+```
+
+```sh
 arte.sh
 arte.sh --retry
 arte.sh --id 083874-000-A

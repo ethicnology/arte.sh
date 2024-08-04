@@ -75,7 +75,8 @@ Future<void> main(List<String> args) async {
 
     var categories = <ArteProgram>[];
     for (var item in slugs) {
-      categories.addAll(await Scrap.catalog(item));
+      var programs = await Scrap.catalog(item);
+      categories.addAll(programs);
     }
 
     var catalog = <String>{};
